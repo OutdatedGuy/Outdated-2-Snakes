@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
+require('dotenv').config();
 
-const server = app.listen(1412);
-console.log('Starting server at 1412');
+const port = process.env.PORT || 1412;
+app.listen(port, () => console.log(`Starting server at ${port}`));
+
 app.use(express.static('public'));
