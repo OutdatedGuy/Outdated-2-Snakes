@@ -1,5 +1,3 @@
-var socket;
-
 var FoodX = [];
 var FoodY = [];
 var blocks = 20;
@@ -18,8 +16,6 @@ function preload() {
 
 function setup() {
 	createCanvas(1300, 700);
-
-	socket = io.connect();
 
 	for(var s = 0; s < LAMBI.length; s++) {
 		SNAKES[s][LAMBI[s]++] = new SnakeBody(0, 0);
