@@ -1,17 +1,25 @@
 var FoodX = [];
 var FoodY = [];
+var ran = [];
 var blocks = 20;
 var end;
 let SNAKES = [[], []];
 var LAMBI = [0, 0];
-var ran = [];
+let COL = [0, 0];
 let eatSound;
 let deadSound;
-let COL = [0, 0];
+let appleImg;
+let pearImg;
+let orangeImg;
+let bananaImg;
 
 function preload() {
 	deadSound = loadSound("sounds/Oof.mp3");
 	eatSound = loadSound("sounds/munch-sound-effect.mp3");
+	appleImg = loadImage("img/Apple.png");
+	pearImg = loadImage("img/Pear.png");
+	orangeImg = loadImage("img/Orange.png");
+	bananaImg = loadImage("img/Banana.png");
 }
 
 function setup() {
@@ -173,53 +181,13 @@ function foodLocation(f) {
 
 function FoodShow(type, f) {
 	if (type == 1) {
-		stroke(0);
-		strokeWeight(1);
-		fill(185, 52, 52);
-		rectMode(CORNER);
-		rect(FoodX[f] + 9, FoodY[f], 2, 6);
-		fill(255, 0, 0);
-		ellipseMode(CORNER);
-		ellipse(FoodX[f], FoodY[f] + 3, 20, 16);
-		fill(0, 255, 0);
-		ellipse(FoodX[f] + 11, FoodY[f] + 1, 9, 2.5);
+		image(bananaImg, FoodX[f], FoodY[f], 20,20);
 	} else if (type == 2) {
-		stroke(0);
-		strokeWeight(1);
-		fill(185, 52, 52);
-		rectMode(CORNER);
-		rect(FoodX[f] + 9, FoodY[f], 2, 6);
-		fill(255, 140, 0);
-		ellipseMode(CORNER);
-		ellipse(FoodX[f], FoodY[f] + 3, 20, 17);
-		fill(0, 255, 0);
-		ellipse(FoodX[f] + 11, FoodY[f] + 1, 9, 2.5);
+		image(appleImg, FoodX[f], FoodY[f], 20,20);
 	} else if (type == 3) {
-		noFill();
-		stroke(0);
-		strokeWeight(1);
-		line(FoodX[f] + 10, FoodY[f] + 2, FoodX[f] + 5, FoodY[f] + 17);
-		line(FoodX[f] + 10, FoodY[f] + 2, FoodX[f] + 15, FoodY[f] + 17);
-		fill(255, 0, 0);
-		circle(FoodX[f] + 5, FoodY[f] + 17, 7);
-		circle(FoodX[f] + 15, FoodY[f] + 17, 7);
+		image(pearImg, FoodX[f], FoodY[f], 20,20);
 	} else if (type == 4) {
-		noFill();
-		stroke(255, 255, 0);
-		strokeWeight(5);
-		arc(FoodX[f] + 18, FoodY[f] + 1, 30, 30, HALF_PI + 0.30, PI - 0.30);
-		arc(FoodX[f] + 20, FoodY[f], 30, 18, HALF_PI + 0.30, PI - 0.30);
-		strokeWeight(1);
-		stroke(50);
-		arc(FoodX[f] + 18, FoodY[f] + 1, 30, 30, HALF_PI + 0.30, PI - 0.30);
-		arc(FoodX[f] + 20, FoodY[f], 30, 18, HALF_PI + 0.30, PI - 0.30);
-		noStroke();
-		fill(0, 255, 0);
-		quad(FoodX[f], FoodY[f] + 2, FoodX[f] + 1, FoodY[f] + 5, FoodX[f] + 7, FoodY[f] + 2, FoodX[f] + 6, FoodY[f]);
-		stroke(0);
-		strokeWeight(2);
-		point(FoodX[f] + 16, FoodY[f] + 16);
-		point(FoodX[f] + 19, FoodY[f] + 9);
+		image(orangeImg, FoodX[f], FoodY[f], 20,20);
 	}
 }
 
