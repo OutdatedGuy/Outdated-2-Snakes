@@ -30,7 +30,7 @@ function setup() {
 		COL[s] = color(random(255), random(255), random(255));
 	}
 
-	for(s = 0; s < 6; s++) {
+	for(var s = 0; s < 6; s++) {
 		foodLocation(s);
 	}
 
@@ -47,10 +47,10 @@ function setup() {
 
 function draw() {
 	if (end == 0) {
-		for(i = 0; i < LAMBI.length; i++) {
+		for(var i = 0; i < LAMBI.length; i++) {
 			SNAKES[i][0].move();
 		}
-		for(i = 0; i < LAMBI.length; i++) {
+		for(var i = 0; i < LAMBI.length; i++) {
 			SNAKES[i][0].dead(i);
 		}
 		gameScreen();
@@ -147,7 +147,7 @@ function revive(me) {
 			if (k == me) {
 				continue;
 			}
-			for (i = 0; i < LAMBI[k]; i++) {
+			for (var i = 0; i < LAMBI[k]; i++) {
 			if (ranX == SNAKES[k][i].x && ranY == SNAKES[k][i].y) {
 				revive(me);
 			}
@@ -161,7 +161,7 @@ function foodLocation(f) {
 	FoodY[f] = int(random(1, (height / blocks) - 2)) * blocks;
 	ran[f] = int(random(1, 5));
 
-	for(i = 0; i < FoodX.length; i++) {
+	for(var i = 0; i < FoodX.length; i++) {
 		if(i == f) {
 			continue;
 		}
@@ -170,8 +170,8 @@ function foodLocation(f) {
 		}
 	}
 	
-	for(k = 0; k < LAMBI.length; k++) {
-		for (i = 0; i < LAMBI[k]; i++) {
+	for(var k = 0; k < LAMBI.length; k++) {
+		for (var i = 0; i < LAMBI[k]; i++) {
 			if (FoodX[f] == SNAKES[k][i].x && FoodY[f] == SNAKES[k][i].y) {
 				foodLocation(f);
 			}
@@ -227,6 +227,16 @@ function keyPressed() {
 		} else if (keyCode === 72 && SNAKES[2][0].ySpeed > -1) {
 			SNAKES[2][0].updateSpeed(0, 1);
 		}
+
+		if (keyCode === 97 && SNAKES[3][0].xSpeed < 1) {
+			SNAKES[3][0].updateSpeed(-1, 0);
+		} else if (keyCode === 99 && SNAKES[3][0].xSpeed > -1) {
+			SNAKES[3][0].updateSpeed(1, 0);
+		} else if (keyCode === 101 && SNAKES[3][0].ySpeed < 1) {
+			SNAKES[3][0].updateSpeed(0, -1);
+		} else if (keyCode === 98 && SNAKES[3][0].ySpeed > -1) {
+			SNAKES[3][0].updateSpeed(0, 1);
+		}
 	}
 }
 
@@ -259,7 +269,7 @@ function gameScreen() {
 	rectMode(CORNER);
 	rect(blocks - 1, blocks - 1, width - 2 * blocks + 2, height - 2 * blocks + 2);
 
-	for(i = 0; i < LAMBI.length; i++) {
+	for(var i = 0; i < LAMBI.length; i++) {
 		SNAKES[i][0].eat(i);
 	}
 
@@ -276,12 +286,12 @@ function gameScreen() {
 		text("Tied: " + (LAMBI[0] - 1), width / 2, height / 2);
 	}
 
-	for(i = 0; i < FoodX.length; i++) {
+	for(var i = 0; i < FoodX.length; i++) {
 		FoodShow(ran[i], i);
 	}
 
-	for(k = 0; k < LAMBI.length; k++) {
-		for (i = LAMBI[k] - 1; i >= 0; i--) {
+	for(var k = 0; k < LAMBI.length; k++) {
+		for (var i = LAMBI[k] - 1; i >= 0; i--) {
 			SNAKES[k][i].show(COL[k]);
 			if (i == 0) {
 				SNAKES[k][0].eyes();
@@ -289,8 +299,8 @@ function gameScreen() {
 		}
 	}
 
-	for(k = 0; k < LAMBI.length; k++) {
-		for (i = LAMBI[k] - 1; i > 0; i--) {
+	for(var k = 0; k < LAMBI.length; k++) {
+		for (var i = LAMBI[k] - 1; i > 0; i--) {
 			SNAKES[k][i].x = SNAKES[k][i - 1].x;
 			SNAKES[k][i].y = SNAKES[k][i - 1].y;
 			SNAKES[k][i].xSpeed = SNAKES[k][i - 1].xSpeed;
