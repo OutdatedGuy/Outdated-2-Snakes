@@ -12,6 +12,8 @@ let appleImg;
 let pearImg;
 let orangeImg;
 let bananaImg;
+let over;
+let player = [];
 
 function preload() {
 	deadSound = loadSound("sounds/Oof.mp3");
@@ -25,32 +27,34 @@ function preload() {
 function setup() {
 	createCanvas(1300, 700);
 
-	for(var s = 0; s < LAMBI.length; s++) {
+	for (var s = 0; s < LAMBI.length; s++) {
 		SNAKES[s][LAMBI[s]++] = new SnakeBody(0, 0);
-		COL[s] = color(random(255), random(255), random(255));
+		COL[s] = color(
+			random(50 * s, 255),
+			random(50 * (s + 1), 255),
+			random(50 * (s + 2), 255)
+		);
 	}
 
-	for(var s = 0; s < 6; s++) {
-		foodLocation(s);
-	}
+	for (var s = 0; s < 555; s++) foodLocation(s);
 
 	frameRate(18);
 
-	end = -1;
-	
+	over = false;
+
 	deadSound.rate(4);
 	eatSound.rate(1.7);
 	eatSound.setVolume(0.25);
 
-	startScreen();
+	takeNames();
 }
 
 function draw() {
 	if (end == 0) {
-		for(var i = 0; i < LAMBI.length; i++) {
+		for (var i = 0; i < LAMBI.length; i++) {
 			SNAKES[i][0].move();
 		}
-		for(var i = 0; i < LAMBI.length; i++) {
+		for (var i = 0; i < LAMBI.length; i++) {
 			SNAKES[i][0].dead(i);
 		}
 		gameScreen();
@@ -68,32 +72,49 @@ class SnakeBody {
 		this.xSpeed = xS * blocks;
 		this.ySpeed = xY * blocks;
 	}
-	eyes() {
+	eyes(me) {
 		fill(0);
 		noStroke();
 		ellipseMode(CENTER);
+		textSize(10);
 		if (this.xSpeed > 0) {
 			ellipse(this.x + 15, this.y + 5, 6, 3);
 			ellipse(this.x + 15, this.y + 15, 6, 3);
+			fill(255);
+			text(player[me].value(), this.x + 10, this.y + 30);
 		} else if (this.xSpeed < 0) {
 			ellipse(this.x + 5, this.y + 5, 6, 3);
 			ellipse(this.x + 5, this.y + 15, 6, 3);
+			fill(255);
+			text(player[me].value(), this.x + 10, this.y + 30);
 		} else if (this.ySpeed < 0) {
 			ellipse(this.x + 5, this.y + 5, 3, 6);
 			ellipse(this.x + 15, this.y + 5, 3, 6);
+			fill(255);
+			text(player[me].value(), this.x + 10, this.y - 5);
 		} else if (this.ySpeed > 0) {
 			ellipse(this.x + 5, this.y + 15, 3, 6);
 			ellipse(this.x + 15, this.y + 15, 3, 6);
+			fill(255);
+			text(player[me].value(), this.x + 10, this.y + 30);
+		} else {
+			fill(255);
+			text(player[me].value(), this.x + 10, this.y - 5);
 		}
 	}
 	dead(me) {
-		for(var k = 0; k < LAMBI.length; k++) {
+		for (var k = 0; k < LAMBI.length; k++) {
 			if (k == me) {
 				continue;
 			}
 			for (var i = 0; i < LAMBI[k]; i++) {
 				if (this.x == SNAKES[k][i].x && this.y == SNAKES[k][i].y) {
-					if(i == 0 || (i == 1 && SNAKES[me][1].x == SNAKES[k][0].x && SNAKES[me][1].y == SNAKES[k][0].y)) {
+					if (
+						i == 0 ||
+						(i == 1 &&
+							SNAKES[me][1].x == SNAKES[k][0].x &&
+							SNAKES[me][1].y == SNAKES[k][0].y)
+					) {
 						deadSound.play();
 						LAMBI[k] = 0;
 						revive(k);
@@ -106,28 +127,38 @@ class SnakeBody {
 		}
 	}
 	eat(me) {
-		for(var f = 0; f < FoodX.length; f++) {
+		for (var f = 0; f < FoodX.length; f++) {
 			if (this.x == FoodX[f] && this.y == FoodY[f]) {
 				eatSound.play();
-				SNAKES[me][LAMBI[me]] = new SnakeBody(SNAKES[me][LAMBI[me] - 1].x, SNAKES[me][LAMBI[me] - 1].y);
+				SNAKES[me][LAMBI[me]] = new SnakeBody(
+					SNAKES[me][LAMBI[me] - 1].x,
+					SNAKES[me][LAMBI[me] - 1].y
+				);
 				LAMBI[me]++;
-				foodLocation(f);
+				FoodX.splice(f, 1);
+				FoodY.splice(f, 1);
+				ran.splice(f, 1);
+				if (FoodX.length == 0) {
+					over = true;
+					end = 3;
+					endScreen();
+				}
 			}
 		}
 	}
 	move() {
 		this.x = this.x + this.xSpeed;
 		this.y = this.y + this.ySpeed;
-		if(this.x < blocks) {
-			this.x = width - (2*blocks);
+		if (this.x < blocks) {
+			this.x = width - 2 * blocks;
 		}
-		if(this.y < blocks) {
-			this.y = height - (2*blocks);
+		if (this.y < blocks) {
+			this.y = height - 2 * blocks;
 		}
-		if(this.x > width - (2*blocks)) {
+		if (this.x > width - 2 * blocks) {
 			this.x = blocks;
 		}
-		if(this.y > height - (2*blocks)) {
+		if (this.y > height - 2 * blocks) {
 			this.y = blocks;
 		}
 	}
@@ -140,14 +171,14 @@ class SnakeBody {
 }
 
 function revive(me) {
-	var ranX = int(random(1, (width / blocks) - 2)) * blocks;
-	var ranY = int(random(1, (height / blocks) - 2)) * blocks;
+	var ranX = int(random(1, width / blocks - 2)) * blocks;
+	var ranY = int(random(1, height / blocks - 2)) * blocks;
 
-	for(var k = 0; k < LAMBI.length; k++) {
-			if (k == me) {
-				continue;
-			}
-			for (var i = 0; i < LAMBI[k]; i++) {
+	for (var k = 0; k < LAMBI.length; k++) {
+		if (k == me) {
+			continue;
+		}
+		for (var i = 0; i < LAMBI[k]; i++) {
 			if (ranX == SNAKES[k][i].x && ranY == SNAKES[k][i].y) {
 				revive(me);
 			}
@@ -157,20 +188,20 @@ function revive(me) {
 }
 
 function foodLocation(f) {
-	FoodX[f] = int(random(1, (width / blocks) - 2)) * blocks;
-	FoodY[f] = int(random(1, (height / blocks) - 2)) * blocks;
+	FoodX[f] = int(random(1, width / blocks - 2)) * blocks;
+	FoodY[f] = int(random(1, height / blocks - 2)) * blocks;
 	ran[f] = int(random(1, 5));
 
-	for(var i = 0; i < FoodX.length; i++) {
-		if(i == f) {
+	for (var i = 0; i < FoodX.length; i++) {
+		if (i == f) {
 			continue;
 		}
-		if(FoodX[i] == FoodX[f] && FoodY[i] == FoodY[f]) {
+		if (FoodX[i] == FoodX[f] && FoodY[i] == FoodY[f]) {
 			foodLocation(f);
 		}
 	}
-	
-	for(var k = 0; k < LAMBI.length; k++) {
+
+	for (var k = 0; k < LAMBI.length; k++) {
 		for (var i = 0; i < LAMBI[k]; i++) {
 			if (FoodX[f] == SNAKES[k][i].x && FoodY[f] == SNAKES[k][i].y) {
 				foodLocation(f);
@@ -181,18 +212,18 @@ function foodLocation(f) {
 
 function FoodShow(type, f) {
 	if (type == 1) {
-		image(bananaImg, FoodX[f], FoodY[f], 20,20);
+		image(bananaImg, FoodX[f], FoodY[f], 20, 20);
 	} else if (type == 2) {
-		image(appleImg, FoodX[f], FoodY[f], 20,20);
+		image(appleImg, FoodX[f], FoodY[f], 20, 20);
 	} else if (type == 3) {
-		image(pearImg, FoodX[f], FoodY[f], 20,20);
+		image(pearImg, FoodX[f], FoodY[f], 20, 20);
 	} else if (type == 4) {
-		image(orangeImg, FoodX[f], FoodY[f], 20,20);
+		image(orangeImg, FoodX[f], FoodY[f], 20, 20);
 	}
 }
 
 function keyPressed() {
-	if(end == -1 && keyCode == ENTER) {
+	if (end == -1 && keyCode == ENTER) {
 		end = 0;
 		gameScreen();
 	}
@@ -238,26 +269,55 @@ function keyPressed() {
 			SNAKES[3][0].updateSpeed(0, 1);
 		}
 	}
+
+	if (over && keyCode == ENTER) setup();
+}
+
+function takeNames() {
+	background(60);
+	
+	textSize(50);
+	fill(255, 0, 0);
+	strokeWeight(1);
+	textAlign(CENTER);
+	text("Enter Your Names!", width / 2, 4 * blocks);
+
+	player[0] = createInput("Player1").attribute("maxlength", 10);
+	player[0].position(width / 2 - 300, height / 2 - 60);
+	player[0].size(150, 50);
+
+	player[1] = createInput("Player2").attribute("maxlength", 10);
+	player[1].position(width / 2 + 175, height / 2 - 60);
+	player[1].size(150, 50);
+
+	let button = createButton("Submit");
+	button.position(width / 2 - 50, height / 2 + 100);
+	button.size(120, 50);
+	button.style("cursor: pointer");
+	button.mousePressed(startScreen);
 }
 
 function startScreen() {
+	end = -1;
+	removeElements();
 	background(60);
 	textSize(35);
 	textAlign(CENTER);
 	fill(0, 255, 255);
-	text("Player1 ", 2 * width/6, height/2 - blocks);
-	text("Player2 ", 4 * width/6, height/2 - blocks);
+	text(player[0].value(), (2 * width) / 6, height / 2 - blocks);
+	text(player[1].value(), (4 * width) / 6, height / 2 - blocks);
 	fill(255, 255, 0);
-	text("W, A, D, S", 2 * width/6, height/2 + 2 * blocks);
-	text("Arrow Keys", 4 * width/6, height/2 + 2 * blocks);
+	text("W, A, D, S", (2 * width) / 6, height / 2 + 2 * blocks);
+	text("Arrow Keys", (4 * width) / 6, height / 2 + 2 * blocks);
 	textSize(60);
 	fill(255, 0, 0);
-	text("Press Enter to Continue...", width/2, height - 4 * blocks);
+	strokeWeight(1);
+	text("Press Enter to Continue...", width / 2, height - 4 * blocks);
 	rectMode(CENTER);
 	fill(COL[0]);
-	rect(2 * width/6, height/2 , blocks);
+	rect((2 * width) / 6, height / 2, blocks);
 	fill(COL[1]);
-	rect(4 * width/6, height/2 , blocks);
+	rect((4 * width) / 6, height / 2, blocks);
 }
 
 function gameScreen() {
@@ -267,9 +327,14 @@ function gameScreen() {
 	stroke(255);
 	strokeWeight(1);
 	rectMode(CORNER);
-	rect(blocks - 1, blocks - 1, width - 2 * blocks + 2, height - 2 * blocks + 2);
+	rect(
+		blocks - 1,
+		blocks - 1,
+		width - 2 * blocks + 2,
+		height - 2 * blocks + 2
+	);
 
-	for(var i = 0; i < LAMBI.length; i++) {
+	for (var i = 0; i < LAMBI.length; i++) {
 		SNAKES[i][0].eat(i);
 	}
 
@@ -278,28 +343,21 @@ function gameScreen() {
 	strokeWeight(2);
 	textAlign(CENTER);
 	textSize(45);
-	if (LAMBI[0] > LAMBI[1]) {
-		text("Player1: " + (LAMBI[0] - 1), width / 2, height / 2);
-	} else if (LAMBI[0] < LAMBI[1]) {
-		text("Player2: " + (LAMBI[1] - 1), width / 2, height / 2);
-	} else {
-		text("Tied: " + (LAMBI[0] - 1), width / 2, height / 2);
-	}
 
-	for(var i = 0; i < FoodX.length; i++) {
+	for (var i = 0; i < FoodX.length; i++) {
 		FoodShow(ran[i], i);
 	}
 
-	for(var k = 0; k < LAMBI.length; k++) {
+	for (var k = 0; k < LAMBI.length; k++) {
 		for (var i = LAMBI[k] - 1; i >= 0; i--) {
 			SNAKES[k][i].show(COL[k]);
 			if (i == 0) {
-				SNAKES[k][0].eyes();
+				SNAKES[k][0].eyes(k);
 			}
 		}
 	}
 
-	for(var k = 0; k < LAMBI.length; k++) {
+	for (var k = 0; k < LAMBI.length; k++) {
 		for (var i = LAMBI[k] - 1; i > 0; i--) {
 			SNAKES[k][i].x = SNAKES[k][i - 1].x;
 			SNAKES[k][i].y = SNAKES[k][i - 1].y;
@@ -307,4 +365,27 @@ function gameScreen() {
 			SNAKES[k][i].ySpeed = SNAKES[k][i - 1].ySpeed;
 		}
 	}
+}
+
+function endScreen() {
+	background(60);
+
+	stroke(255, 0, 0);
+	strokeWeight(3);
+	fill(255, 150, 200);
+	textSize(80);
+	if (LAMBI[0] > LAMBI[1]) {
+		text(player[0].value() + " Won!!!", width / 2, height / 2);
+	} else if (LAMBI[0] < LAMBI[1]) {
+		text(player[1].value() + " Won!!!", width / 2, height / 2);
+	} else {
+		text("Match Tied", width / 2, height / 2);
+	}
+
+	textSize(50);
+	fill(255, 0, 0);
+	strokeWeight(1);
+	text("Press Enter to Continue...", width / 2, height - 4 * blocks);
+
+	for (var s = 0; s < LAMBI.length; s++) LAMBI[s] = 0;
 }
