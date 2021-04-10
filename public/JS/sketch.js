@@ -36,7 +36,7 @@ function setup() {
 		);
 	}
 
-	for (var s = 0; s < 555; s++) foodLocation(s);
+	for (var s = 0; s < 444; s++) foodLocation(s);
 
 	frameRate(18);
 
