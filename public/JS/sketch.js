@@ -275,7 +275,7 @@ function keyPressed() {
 
 function takeNames() {
 	background(60);
-	
+
 	textSize(50);
 	fill(255, 0, 0);
 	strokeWeight(1);
