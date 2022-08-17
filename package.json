@@ -1,6 +1,6 @@
 {
   "name": "outdated-2-snakes",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A Local Multiplayer Snake Game",
   "main": "server.js",
   "scripts": {
