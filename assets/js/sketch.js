@@ -16,12 +16,12 @@ let over;
 let player = [];
 
 function preload() {
-	deadSound = loadSound("sounds/Oof.mp3");
-	eatSound = loadSound("sounds/munch-sound-effect.mp3");
-	appleImg = loadImage("img/Apple.png");
-	pearImg = loadImage("img/Pear.png");
-	orangeImg = loadImage("img/Orange.png");
-	bananaImg = loadImage("img/Banana.png");
+	deadSound = loadSound("assets/sounds/Oof.mp3");
+	eatSound = loadSound("assets/sounds/munch-sound-effect.mp3");
+	appleImg = loadImage("assets/img/Apple.png");
+	pearImg = loadImage("assets/img/Pear.png");
+	orangeImg = loadImage("assets/img/Orange.png");
+	bananaImg = loadImage("assets/img/Banana.png");
 }
 
 function setup() {
